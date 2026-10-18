@@ -1,0 +1,23 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight UTC
+  workflow_dispatch: # Allows you to trigger it manually via a button
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync upstream changes
+        id: sync
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
+        with:
+          upstream_repository: morluto/rea
+          upstream_branch: main
+          target_branch: main
+          target_token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Check for errors
+        if: failure()
+        run: echo "Sync failed. This usually happens if you have conflicting changes in your fork."
